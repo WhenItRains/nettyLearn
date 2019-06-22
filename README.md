@@ -2,8 +2,7 @@
 
 # java NIO
 
-###NIO:Selector(选择器)
-  
+### NIO:Selector(选择器)
 ### NIO:Channel(通道)
 + Channel是用来写入数据或者读取数据的*对象*!,类似stream。
 + 读写方式:Channel是双向的，stream是单向的
