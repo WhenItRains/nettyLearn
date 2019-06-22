@@ -5,7 +5,7 @@
 ### NIO:Selector(选择器)
   
 ### NIO:Channel(通道)
-+ Channel是用来写入数据或者读取数据的*对象*!,类似stream。
++ Channel是用来写入数据或者读取数据的*对象*!,类似java IO中的stream。
 + 读写方式:Channel是双向的，stream是单向的
 + 更能很好的反映出底层操作系统的真实情况，linux的底层数据通道是双向的(即读又写)
 ### NIO:Buffer(缓冲区)
@@ -13,6 +13,15 @@
 + buffer API
     > filp() 读写切换,必须调用.用来修改buffer维护的变量！
 + java原生数据类型都有各自对应的Buffer类型。(boolen没有)
++ 绝对方法：完全忽略掉 position,limit
++ 相对方法：JDK会自动维护position,limit
+##### Buffer重要属性:
++ position  小于等于 position
++ limit 小于等于 capacity 
+    > 初始值为 capacity
++ capacity
++ mark
+    > 初始化为 -1
 
 
 # java IO
