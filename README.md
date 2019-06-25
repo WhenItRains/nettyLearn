@@ -12,6 +12,7 @@
 + buffer本身是一块内存,底层是数组,数据的读与写都是通过Buffer实现
 + buffer API
     > filp() 读写切换,必须调用.用来修改buffer维护的变量！
+    > putChar() putInt() ... 添加原生类型的数据,但是必须要按照数据取出,见 NIOTest5
 + java原生数据类型都有各自对应的Buffer类型。(boolen没有)
 + 绝对方法：完全忽略掉 position,limit
 + 相对方法：JDK会自动维护position,limit
@@ -23,7 +24,16 @@
 + mark
     > 初始化为 -1
 
+#####额外收获
++ java 关键字
+    > native  即 JNI,Java Native Interface :java本地方法
++ 直接缓冲
+    > 将java中的对象都在堆中,byteBuffer继承中的两种HeapByteBuffer(非直接缓冲/简介缓冲)和DirectByteBuffer(直接缓冲)
+    直接缓冲的java在堆中,但是实际数据在java内存模型之外的堆外内存中,对比简介缓冲,有零拷贝的优势！ 见图片0拷贝.png
++ 间接缓冲    
+    > 间接缓冲在操作buffer的时候(I/0操作)将java堆内的数据Copy到堆外中,进行IO操作.不直接操作java的内存数据.这样多了一次拷贝. 见图片0拷贝.png
 
+    
 # java IO
 
 ### IO:Stream(流)
