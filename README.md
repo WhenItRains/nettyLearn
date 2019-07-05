@@ -6,14 +6,14 @@
 + 介绍：
     > SelectableChannel是双工的多路复用的对象
 + 关键元素：selectionKey
-    > 将channel注册到selector上,selectionKey就会被创建
+    + 将channel注册到selector上,selectionKey就会被创建
     + setKey:表示channel事件的所有情况：读、写、关、连接,selection创建时为空。
     + selected-Key:是setKey的子集,感兴趣的channel事件,selection创建时为空。
     + cancelled-Key:也是setKey的子集,是已经取消的channel事件,selection创建时为空。
-    1. 通过channel的register(selector,int)，将selector注册到channel中;也将key添加到Set key中
-    1. 当channel关闭(close)的时候或者调用selectionKey的cancel方法会将key添加到cancelled-Key,channel取消注册会在下一次selection时执行
-    1. key从selected-key的setKey中移除：通过set的remove()或者set的Iterator的remove().不能随意的添加和删除，只能通过channel的事件去增加key
-    1. ............读selector源码
+    + 通过channel的register(selector,int)，将selector注册到channel中;也将key添加到Set key中
+    + 当channel关闭(close)的时候或者调用selectionKey的cancel方法会将key添加到cancelled-Key,channel取消注册会在下一次selection时执行
+    + key从selected-key的setKey中移除：通过set的remove()或者set的Iterator的remove().不能随意的添加和删除，只能通过channel的事件去增加key
+    + ............读selector源码
     
 ### NIO:Channel(通道)
 + Channel是用来写入数据或者读取数据的*对象*!,类似java IO中的stream。
@@ -42,7 +42,7 @@
 + mark
     > 初始化为 -1
 
-#####额外收获
+##### 额外收获
 + java 关键字
     > native  即 JNI,Java Native Interface :java本地方法
 + IO与NIO区分：
