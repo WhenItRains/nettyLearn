@@ -1,5 +1,54 @@
 
+# Netty
+### Netty :Handler(数据处理)
+#### netty提供的handler
+    webSocketChannelInitialzer.class :websocket使用
+### Netty :Handler处理的消息类型
+    TextWebSocketFrame ：websocket的消息类型
+### Netty :Hander的方法介绍
+1. userEventTriggered() 
+    > 主要用于心跳检测,由于Netty服务器或者客户端检测不到断网,所以需要使用心跳,检测网路断开.Netty属于TCP编程
+1. channelActive()
+    > channel激活的时候,调用这个方法    
+### Netty :byteBuf(netty的字节缓冲)
 
+### Netty :EventLoopGroup(事件循环组)
+    见lc.learn.netty.secondexample.MyServer 内容
+##### EventLoopGroup aip
+1. next() 返回下一个要使用的EventLoop
+1. register(Channel channel) 将channel注册到EventLoop中,注册完成后通知channelFuture.异步方法
+1. register(ChannelPromsie channelPromsie) 类似 register(Channel channel)
+
+### Netty :NioEventLoopGroup(Nio事件循环组)
+    基于NIO selector的channel
+
+### Netty :ServerBootStrap(启动ServerChannel)
+
+### Netty :设计模式(启动ServerChannel)
+##### Rcactor模式 (反应器模式)
+    netty整体设计模式是Rcactor模式的体现
+    参考文档 Scalable IO in java
+            Reactor :reactor-siemens.pdf
+    
+
+### Netty 额外收获
+1. protoBuf:编解码.
+1. gRPC:将数据进行整合的方式,跨语言
+1. thrift:
+1. 再学零拷贝():
+1. 操作系统(linux、unix)空间:
+     1. 内核和用户空间,权限不同..
+     1. 操作系统切换空间模式.比如:在用户空间向内存空间发出请求时,
+     1. 第一种文件拷贝:
+        > 读数据时,在用户空间向内存空间发出请求,然后内核空间将硬盘拷贝到内核空间缓冲区,再将内核空间拷贝到用户空间缓冲区，然后进行数据传输、操作等..
+        写数据时,将用户空间缓冲区的数据拷贝到内核空间缓冲区(与读数据的时候不同)，再进行网络数据传输
+        读写数据时,4次空间转换，2次没必要的拷贝
+     1. 第二种文件拷贝:2次空间转换，0次没必要的拷贝,sendfile()系统调用方法！ 
+        > 网络数据传输:发送数据 =>用户空间先调用sendfile()访问内核空间,内核空间访问硬盘,将硬盘数据读取到内核空间缓冲区,再将数据写入到目标socket Buffer(与内核空间缓冲区不同)中,通过socketBuffer向目标发送数据,然后返回数据或者结果..
+     1. 第三种文件拷贝: 
+        > 用户空间先调用sendfile()访问内核空间,内核空间访问硬盘,将硬盘数据通过scatter/gather DMA读取到内核空间缓冲区,需要底层操作系统支持.
+1. 标记接口:没有增加新的方法.
+1. volatile关键字,防止代码重排序,代码顺序执行！！
 # java NIO
 
 ### NIO:Selector(选择器)
@@ -16,7 +65,7 @@
     + ............读selector源码
     
 ### NIO:Channel(通道)
-+ Channel是用来写入数据或者读取数据的*对象*!,类似java IO中的stream。
++ Channel是用来写入数据或者读取数据的`对象`,类似java IO中的stream。
 + 读写方式:Channel是双向的，stream是单向的
 + 更能很好的反映出底层操作系统的真实情况，linux的底层数据通道是双向的(即读又写)
 ### NIO:Buffer(缓冲区)
@@ -34,7 +83,7 @@
     > 间接缓冲在操作buffer的时候(I/0操作)将java堆内的数据Copy到堆外中,进行IO操作.不直接操作java的内存数据.这样多了一次拷贝. 见图片0拷贝.png
 + 映射缓冲buffer
     > 将文件内容放到堆外内存中，直接将操作内存数据.然后由操作系统将数据同步到文件中.见NIOTest9.java
-##### Buffer重要属性:
+##### NIO:Buffer重要属性:
 + position  小于等于 position
 + limit 小于等于 capacity 
     > 初始值为 capacity
@@ -42,7 +91,7 @@
 + mark
     > 初始化为 -1
 
-##### 额外收获
+##### NIO:额外收获
 + java 关键字
     > native  即 JNI,Java Native Interface :java本地方法
 + IO与NIO区分：
@@ -75,13 +124,13 @@
 + BOM(Byte order Mark)
     > 文件的开始是否有 (Zero Width No-Break Space) BOM头信息
 ## CharSet类
-
-+ 两个文件之间拷贝，中间设置ISO-8859-1 编码，拷贝内容为中文，输出到另外的文件，中午没有乱码的问题
-
+###### 两个文件之间拷贝，中间设置ISO-8859-1 编码，拷贝内容为中文，输出到另外的文件，另外没有乱码的问题
+>见 NIOTest13.class的例子
+    将数据从一个文件中取出，到另外的一个文件的中间解码和编码的过程中，都使用了同一个编解码格式，而且两个文件的编解码也是相同的，所以没有出现乱码问题。
+    但是，在解码(ISO-8859-1)的`过程中已经出现了乱码`，但是又将乱码按照ISO-8859-1形式解析了回去，数据就没有被改变。但是在中间显示的时候是乱码的！
 # java IO
-
 ### IO:Stream(流)
-#### 代码框架
+#### 代码样例
     传统IO 服务端：
     ServerSocket serverSocket = ...
     serverSocket.bind(8899)  //进行连接的端口号，不是进行数据传输的端口号！
