@@ -29,8 +29,25 @@
     netty整体设计模式是Rcactor模式的体现
     参考文档 Scalable IO in java
             Reactor :reactor-siemens.pdf
-    
-
+##### Recotor模式角色构成(Recotor模式一共有5种角色构成):
+   > 1. Handle(句柄或是描述符):本质上表示一种资源，是由操作系统提供的;该资源用于表示一个个的事件，
+   > 不如说文件描述符，或是针对网络编程中的socket的描述，事件既可以来自外部，也可以来自内部；外部事件比如说客户端的连接请求，客户端发送过来数据等；内部事件比如说操作系统的定时器事件等。它本质上就是一个文件描述符。handle是事件生成的发源地。
+   > 1. synchronous Event demultiplexer(同步事件分离器)：它本身是一个系统调用，用于等待事件的发生(事件可能是一个，也可能是多个)。
+   > 调用方在调用它的时候会被阻塞，一直阻塞到同步事件分离起上有事件产生为止，对于Linux来说，同步事件分离器指的就是常用的I/O多路复用机制，比如说select、poll、epoll等。在java NIO领域中，同步事件分离器对应的组件是selector；对应的阻塞方法是select方法
+   > 1. Event handler(具体事件处理器)：本身由于多个回调方法构成，这些回调方法构成了应用相关的对于某个事件的反馈机制。
+   > Netty相比于Java NIO来说，在事件处理器这个角色上升级，它为开发者提供了大量的回调方法，供我们在特定事件产生时实现相应的回调方法进行业务逻辑的处理
+   > 1. Concrete Event Handler(具体事件处理器)：是事件处理器的实现。它本身实现了事件处理器所提供的各个回调方法，从而实现特定的业务逻辑。
+   > 它本身实现了事件处理器所提供的各个回调方法，从而实现了特定业务的逻辑。它本质上就是我们所缩写的一个个的处理器实现
+   > 1. Initiation Dispatcher(初始分发器)：实际上就是Reactor角色。它本身定义了一些规范，
+   > 这些规范用于控制事件的调度方式，同时又提供了应用进行事件处理器的注册、删除等设施，它本身是整个事件处理器的核心所在，Initiation Dispatcher会通过同步事件分离器来等待事件的发生。一旦事件发生，Initiation Dispatcher首先会分离出每一个事件，然后调用事件处理器，最后调用相关的调用方法来处理这些事件。
+##### Recotor模式的流程
+   > 1. 当应用向Initiation Dispatcher(初始分发器) 注册具体的事件处理器时，应用会标识出该事件处理器希望Initiation Dispatcher在某个事件发生时向其通知该事件，该事件与Handle关联。
+   > 1. Initiation Dispatcher会要求每个事件处理器向起传递内部的Handle，该handle向操作系统标识了事件处理器。
+   > 1. 当所有的事件处理器注册完毕后，应用会调用Handle_events方法来启动Initiation Dispatcher的事件循环。
+   > 这时，Initiation Dispatcher会将每个注册的事件管理器的handle合并起来，并使用同步事件分离器等待这些事件的发生。比如说，TCP协议层会使用select同步事件分离器操作来等待客户端发送的数据到达连接的socket handle上。
+   > 1. 当与某个事件源对应的handle变成ready状态时(比如说，TCP socket变为等待读状态时)，同步事件分离器会通知Initiation Dispatcher
+   > 1. Initiation Dispatcher会触发事件处理器的回调方法，从而响应这个处于ready状态的Handle。当事件发生时，Initiation Dispatcher 会被事件源激活的handle作为key来寻找并分发恰当的事件处理器回调方法。
+   > 1. Initiation Dispatcher会回调事件处理器的handle_events回调方法来执行特定与应用的功能(开发者自己所编写的功能)，从而响应这个事件。所发生的事件类型可以作为该方法参数并被该方法内部使用来执行额外的特定于服务的分离与分发。
 ### Netty 额外收获
 1. protoBuf:编解码.
 1. gRPC:将数据进行整合的方式,跨语言
