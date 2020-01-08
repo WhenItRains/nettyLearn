@@ -6,7 +6,7 @@
 ### Netty :Handler处理的消息类型
     TextWebSocketFrame ：websocket的消息类型
 ### Netty :Hander的方法介绍
-1. userEventTriggered() 
+1. userEventTriggered()
     > 主要用于心跳检测,由于Netty服务器或者客户端检测不到断网,所以需要使用心跳,检测网路断开.Netty属于TCP编程
 1. channelActive()
     > channel激活的时候,调用这个方法    
@@ -48,6 +48,9 @@
    > 1. 当与某个事件源对应的handle变成ready状态时(比如说，TCP socket变为等待读状态时)，同步事件分离器会通知Initiation Dispatcher
    > 1. Initiation Dispatcher会触发事件处理器的回调方法，从而响应这个处于ready状态的Handle。当事件发生时，Initiation Dispatcher 会被事件源激活的handle作为key来寻找并分发恰当的事件处理器回调方法。
    > 1. Initiation Dispatcher会回调事件处理器的handle_events回调方法来执行特定与应用的功能(开发者自己所编写的功能)，从而响应这个事件。所发生的事件类型可以作为该方法参数并被该方法内部使用来执行额外的特定于服务的分离与分发。
+
+### Netty Channel与ChannelPipeline
+   > 1.可以互相获取对方
 ### Netty 额外收获
 1. protoBuf:编解码.
 1. gRPC:将数据进行整合的方式,跨语言
@@ -66,6 +69,7 @@
         > 用户空间先调用sendfile()访问内核空间,内核空间访问硬盘,将硬盘数据通过scatter/gather DMA读取到内核空间缓冲区,需要底层操作系统支持.
 1. 标记接口:没有增加新的方法.
 1. volatile关键字,防止代码重排序,代码顺序执行！！
+1. 在Netty的handler 中，需要有业务线程池
 # java NIO
 
 ### NIO:Selector(选择器)
@@ -107,6 +111,7 @@
 + capacity
 + mark
     > 初始化为 -1
+
 
 ##### NIO:额外收获
 + java 关键字
@@ -193,3 +198,16 @@
     继承是针对类的功能进行扩展！
     装饰者是针对对象的功能进行扩展！
 
+
+
+# Google ProtoBuf
+> Google ProtoBuf :接口描述语言 idl1
+
+### 关键字 
+1. package :类似java的package，防止命名空间冲突。最好提供
+2. java_package : 命名空间以java_package 为准，都是包名。最好提供
+3. java_outer_classname : 最外层的类名称，没有则以文件名。最好提供
+4. 消息属性类型: bool,int32,float,double,string 可以有message 类型
+5. required:是必须要定义的。
+6. optional: 可以设定设定默认值。
+7. repeated:重复的字段，类似List类型的字段。
